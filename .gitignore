@@ -1,0 +1,33 @@
+# Java compiled files
+*.class
+
+# Maven
+target/
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Backup files
+*~
+*.bak
+*.swp
+
+# Build tools
+build/
+bin/
