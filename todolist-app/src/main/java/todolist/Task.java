@@ -62,6 +62,6 @@ public class Task {
     }
 
     @Override public String toString() {
-        return "[" + (completionStatus ? "X" : " ") + "]" + title + " (Due: " + dueDate + ", Priority: " + priority + ")";
+        return "[" + (completionStatus ? "X" : " ") + "] " + title + " (Due: " + dueDate + ", Priority: " + priority + ")";
     }
 }
