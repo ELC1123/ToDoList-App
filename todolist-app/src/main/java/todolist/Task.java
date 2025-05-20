@@ -1,6 +1,7 @@
 package todolist;
 
 import java.time.*;
+import java.util.Objects;
 
 public class Task {
     // Initialize variables
@@ -63,5 +64,21 @@ public class Task {
 
     @Override public String toString() {
         return "[" + (completionStatus ? "X" : " ") + "] " + title + " (Due: " + dueDate + ", Priority: " + priority + ")";
+    }
+
+    @Override public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if(obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Task other = (Task) obj;
+        return title.equals(other.title) && dueDate.equals(other.dueDate) && priority.equals(other.priority);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(title, dueDate, priority);
     }
 }
