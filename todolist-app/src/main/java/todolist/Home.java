@@ -1,6 +1,7 @@
 package todolist;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -10,6 +11,10 @@ import java.util.stream.Collectors;
 public class Home {
 
     @FXML private VBox taskPreviewBox;
+
+    public void refresh() {
+        initialize();
+    }
 
     @FXML public void initialize() {
         List<Task> tasks = TaskData.getTaskList().stream().filter(t -> !t.getCompletionStatus())
@@ -22,6 +27,7 @@ public class Home {
             Label emptyLabel = new Label("Wow! Nothing to do!");
             emptyLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray");
             taskPreviewBox.getChildren().add(emptyLabel);
+            taskPreviewBox.setAlignment(Pos.CENTER);
         }
         else {
             for(Task task : tasks) {
@@ -31,5 +37,4 @@ public class Home {
             } 
         }
     }
-
 }
