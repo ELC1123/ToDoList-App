@@ -1,18 +1,35 @@
 package todolist;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class TaskList {
     
     @FXML private VBox taskContainer;
+    private StackPane contentArea;
+    private MainLayout mainLayoutController;
     
     @FXML void initialize() {
         refreshTaskList();
+    }
+
+    public void setContentArea(StackPane contentArea) {
+        this.contentArea = contentArea;
+    }
+
+    public void setMainLayoutController(MainLayout mainLayoutController) {
+        this.mainLayoutController = mainLayoutController;
     }
 
     public void refreshTaskList() {
@@ -29,18 +46,20 @@ public class TaskList {
             CheckBox completeCheck = new CheckBox();
             completeCheck.setSelected(task.getCompletionStatus());
 
+            // Title + Due Date display
+            Text titleText = new Text(task.getTitle() + " (Due: " + task.getDueDate() + ")");
+            titleText.setStyle("-fx-font-size: 12px;");
+            titleText.setStrikethrough(task.getCompletionStatus());
+            titleText.setFill(task.getCompletionStatus() ? Color.GREY : Color.BLACK);
+
             completeCheck.selectedProperty().addListener((obs, oldVal, newVal) -> {
                 task.setCompletionStatus(newVal);
-                taskContainer.requestFocus();
-                refreshTaskList();
-            });
+                TaskStorage.saveTasks(TaskData.getTaskList());
 
-            // Title + Due Date display
-            Label titleLabel = new Label(task.getTitle() + " (Due: " + task.getDueDate() + ")");
-            titleLabel.setStyle("-fx-font-size: 12px;");
-            if(task.getCompletionStatus()) {
-                titleLabel.setStyle(titleLabel.getStyle() + "-fx-text-fill: gray; -fx-strikethrough: true;");
-            }
+                titleText.setStrikethrough(newVal);
+                titleText.setFill(newVal ? Color.GREY : Color.BLACK);
+                taskContainer.requestFocus();
+            });
 
             // Priority label
             Label priorityLabel = new Label(task.getPriority());
@@ -51,6 +70,14 @@ public class TaskList {
                 case "Low" -> priorityLabel.setTextFill(Color.GREEN);
                 default -> priorityLabel.setTextFill(Color.BLACK);
             }
+
+            Button editButton = new Button("Edit");
+            editButton.setStyle("-fx-background-color: #64b5f6; -fx-text-fill: white;");
+            editButton.setOnAction(e -> {
+                if(mainLayoutController != null) {
+                    mainLayoutController.showAddTaskForEdit(task);
+                }
+            });
 
             // Delete button
             Button deleteButton = new Button("Delete");
@@ -65,7 +92,7 @@ public class TaskList {
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
-            taskRow.getChildren().addAll(completeCheck, titleLabel, spacer, priorityLabel, deleteButton);
+            taskRow.getChildren().addAll(completeCheck, titleText, spacer, priorityLabel, editButton, deleteButton);
             taskContainer.getChildren().add(taskRow);
         }
 

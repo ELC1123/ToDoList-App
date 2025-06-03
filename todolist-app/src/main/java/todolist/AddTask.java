@@ -18,6 +18,8 @@ public class AddTask {
     @FXML private StackPane addTaskRoot;
     @FXML private Button addButton;
 
+    private Task editingTask = null;
+
     // Initialize some portions of the program
     @FXML public void initialize() {
         // Initialize options for priorities
@@ -61,12 +63,26 @@ public class AddTask {
 
         // If task is valid
         if(TaskManager.isValidTask(title, dueDate, priority)) {
-            Task newTask = TaskManager.createTask(title, description, dueDate, priority);
-            TaskData.addTask(newTask);  // add new task to the data
-            clearForm();                // clear inputs
+            if(editingTask != null) {
+                editingTask.setTitle(title);
+                editingTask.setDescription(description);
+                editingTask.setDueDate(dueDate);
+                editingTask.setPriority(priority);
 
-            // Display successful task add
-            showToast("✓ Task added successfully!", "#28a745");
+                TaskStorage.saveTasks(TaskData.getTaskList());
+                showToast("✓ Task updated successfully!", "#17a2b8");
+
+                editingTask = null;
+                addButton.setText("Add Task");
+            }
+            else {
+                Task newTask = TaskManager.createTask(title, description, dueDate, priority);
+                TaskData.addTask(newTask);  // add new task to the data
+
+                // Display successful task add
+                showToast("✓ Task added successfully!", "#28a745");
+            }
+            clearForm();                // clear inputs
         }
         else {
             // Display error
@@ -103,6 +119,15 @@ public class AddTask {
         SequentialTransition seq = new SequentialTransition(fadeIn, stay, fadeOut);
         seq.setOnFinished(e -> addTaskRoot.getChildren().remove(toastLabel));
         seq.play();
+    }
+
+    public void setTaskToEdit(Task task) {
+        editingTask = task;
+        titleField.setText(task.getTitle());
+        descriptionField.setText(task.getDescription());
+        dueDatePicker.setValue(task.getDueDate());
+        priorityBox.setValue(task.getPriority());
+        addButton.setText("Update Task");
     }
 
     private void clearForm() {
